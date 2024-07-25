@@ -34,6 +34,19 @@ lista_dataFrames = []
 lista_nome = []
 diretorio = "/Users/lucassteffenon/projetoPlanilhas/LANÇTOS FOLHA MATRIZ 1 PROD.xlsx"
 
-df = pd.read_excel(diretorio, sheet_name=[0, 1], engine='openpyxl')
+sheet0 = pd.read_excel(diretorio, sheet_name=0, engine='openpyxl')
+sheet1 = pd.read_excel(diretorio, sheet_name=1, engine='openpyxl')
 
-display(df)
+filtrado_sheet0 = pd.DataFrame(columns=sheet0.columns)
+filtrado_sheet1 = pd.DataFrame(columns=sheet1.columns)
+
+for index, row in sheet0.iterrows():
+    if "." in row.iloc[1]:
+        filtrado_sheet0 = filtrado_sheet0.append(row)
+
+for index, row in sheet1.iterrows():
+    if "." in row.iloc[1]:
+        filtrado_sheet1 = filtrado_sheet1.append(row)
+
+print(filtrado_sheet0.to_string())
+print(filtrado_sheet1.to_string())
