@@ -90,7 +90,7 @@ def iniciar_programa():
 # Interface gráfica principal
 def criar_interface():
     root = tk.Tk()
-    root.title("Filtro de Arquivos Excel")
+    root.title("Xtract for Contability")
     root.geometry("500x300")
 
     label = tk.Label(root, text="Bem-vindo ao Filtro de Arquivos Excel!", font=("Helvetica", 18, "bold"))
