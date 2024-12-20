@@ -23,8 +23,8 @@ def selecionar_arquivo_saida():
     global arquivo_saida
     root = tk.Tk()
     root.withdraw()
-    arquivo_saida = filedialog.asksaveasfilename(title='Selecione o local para salvar o arquivo CSV filtrado',
-                                                 defaultextension='.csv', filetypes=[("CSV files", "*.csv")])
+    arquivo_saida = filedialog.asksaveasfilename(title='Selecione o local para salvar o arquivo Excel filtrado',
+                                                 defaultextension='.xlsx', filetypes=[("Excel files", "*.xlsx")])
 
 
 # Função para iniciar o processo de filtragem e salvar o resultado
@@ -52,7 +52,7 @@ def iniciar_programa():
             if arquivo.endswith('.xlsx') or arquivo.endswith('.xls'):
                 # Ler o arquivo Excel, incluindo todas as tabelas
                 caminho_arquivo = os.path.join(diretorio_entrada, arquivo)
-                df_dict = pd.read_excel(caminho_arquivo, sheet_name=None,header=None)
+                df_dict = pd.read_excel(caminho_arquivo, sheet_name=None, header=None)
 
                 # Percorrer apenas as tabelas desejadas do arquivo Excel
                 for sheet_name in tabelas_desejadas:
@@ -68,19 +68,13 @@ def iniciar_programa():
                                         # Adicionar a linha inteira ao DataFrame combinado
                                         df_combinado = pd.concat([df_combinado, pd.DataFrame([row])], ignore_index=True)
 
-        # Salvar o DataFrame combinado em um novo arquivo CSV
-        df_combinado.to_csv(arquivo_saida, index=False, sep=';')
+        # Remover colunas depois da coluna 5 e substituir caracteres especiais no DataFrame combinado
+        df_combinado = df_combinado.iloc[:, :5]
+        for coluna in df_combinado.columns:
+            df_combinado[coluna] = df_combinado[coluna].apply(remover_caracteres_especiais)
 
-        # Abrir o arquivo salvo, remover colunas depois da coluna 5 e substituir caracteres especiais
-        df_resultado = pd.read_csv(arquivo_saida, sep=';')
-        df_resultado = df_resultado.iloc[:, :5]
-
-        # Aplicar a função de remover caracteres especiais em todas as colunas
-        for coluna in df_resultado.columns:
-            df_resultado[coluna] = df_resultado[coluna].apply(remover_caracteres_especiais)
-
-        # Salvar novamente o arquivo atualizado em CSV
-        df_resultado.to_csv(arquivo_saida, index=False, sep=';')
+        # Salvar o DataFrame combinado no arquivo Excel de saída
+        df_combinado.to_excel(arquivo_saida, index=False, header=False)
 
         messagebox.showinfo("Sucesso", f'O arquivo {arquivo_saida} foi atualizado com sucesso.')
     except Exception as e:
